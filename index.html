@@ -1,13 +1,764 @@
-❤拍摄小贴士
-1.拍摄前一天洗头发，不要用护发素
-2.佩戴好美瞳，做好基础护肤
-3.可以自备防晒霜，防晒喷雾，水乳保湿产品哦
-4.迟到半小时无法安排 剩余的尾款到店需泰铢现金支付 提前准备好哈😘
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人化營養診斷書</title>
+    <style>
+        /* --- 全域設定 --- */
+        * { box-sizing: border-box; }
 
-门店地址
+        /* --- 視覺風格設定 --- */
+        :root {
+            --primary-dark: #1F4E79; /* 深藍 */
+            --primary-light: #EBF5FB; /* 極淺藍背景 */
+            --accent-green: #2ECC71; /* 鮮綠 */
+            --accent-soft-green: #D5F5E3; /* 淺綠區塊 */
+            --warning-red: #E74C3C;   /* 警示紅 */
+            --mom-pink: #FADBD8;      /* 媽咪粉 */
+            --gold: #D4AC0D;          /* 膠原蛋白金 */
+            --gold-bg: #FCF3CF;       /* 膠原蛋白淺底 */
+            --purple-light: #E8DAEF;  /* 猛健樂紫 */
+            --notice-bg: #FEF9E7;     /* 注意事項黃 */
+            --text-dark: #2C3E50;
+            --white: #FFFFFF;
+        }
 
-Nana photo studio
-Google地图可导航
-或者
-请复制整个地址黏贴：
-392/15 Maha Rat Rd, Phra Borom Maha Ratchawang, Phra Nakhon, Bangkok 10200
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "Segoe UI", Roboto, sans-serif;
+            background-color: #F4F6F7;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+            padding: 40px 25px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-green);
+        }
+
+        h1 { color: var(--primary-dark); margin: 0; font-size: 1.8rem; letter-spacing: 1px; }
+        p.subtitle { color: #5D6D7E; margin-top: 10px; font-size: 0.95rem; }
+
+        /* 測驗區塊 */
+        .content-box { padding: 30px; }
+        .question-block { margin-bottom: 30px; }
+        
+        label.q-title {
+            display: block;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            border-left: 5px solid var(--accent-green);
+            padding-left: 12px;
+        }
+
+        /* 選項按鈕設定 */
+        .option-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .option-btn { position: relative; cursor: pointer; }
+        .option-btn input { display: none; }
+        .option-btn span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            background: #FAFAFA;
+            border: 1px solid #E5E7E9;
+            border-radius: 12px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            text-align: center;
+            height: 100%;
+            line-height: 1.4;
+        }
+
+        .option-btn input:checked + span {
+            background: var(--primary-dark);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(31, 78, 121, 0.25);
+            font-weight: bold;
+            transform: translateY(-2px);
+        }
+
+        /* 特殊選項顏色 */
+        .special-option span { border: 1px dashed var(--primary-dark); background: #fdfdfd; }
+        .mounjaro-option input:checked + span { background: #8E44AD; border-color: #8E44AD; }
+
+        select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #BDC3C7; font-size: 1rem; background: white; }
+
+        .btn-submit {
+            width: 100%; padding: 16px;
+            background-color: var(--accent-green);
+            color: white;
+            border: none; border-radius: 12px;
+            font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            transition: transform 0.1s;
+        }
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* --- 結果頁樣式 --- */
+        #result-page { display: none; padding: 0; }
+        
+        .result-header { padding: 30px 30px 10px 30px; background: var(--white); }
+
+        /* 警示卡片 */
+        .alert-box {
+            margin: 0 30px 20px 30px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .alert-box.mom { background-color: var(--mom-pink); color: #922B21; border: 1px solid #E6B0AA; }
+        .alert-box.normal { background-color: #FEF9E7; color: #7D6608; border: 1px solid #F9E79F; }
+        .alert-box.mounjaro { background-color: var(--purple-light); color: #5B2C6F; border: 1px solid #D2B4DE; }
+
+        /* 建議列表卡片 */
+        .schedule-card {
+            margin: 20px 30px;
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #EAECEE;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+
+        .time-header {
+            background: var(--primary-dark);
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .synergy-box {
+            background: var(--accent-soft-green);
+            padding: 15px 20px;
+            font-size: 0.9rem;
+            color: #145A32;
+            border-bottom: 1px solid #EAECEE;
+        }
+
+        .item-list { padding: 15px 20px; }
+
+        .supplement-item {
+            display: flex; margin-bottom: 10px; padding-bottom: 10px;
+            border-bottom: 1px dashed #eee; align-items: flex-start;
+        }
+        .supplement-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .supp-name { font-weight: bold; color: var(--primary-dark); min-width: 90px; }
+        .supp-desc { font-size: 0.9rem; color: #555; flex: 1; }
+
+        /* 維補益專區 & 品牌故事 */
+        .brand-section {
+            background-color: #FDFEFE;
+            padding: 30px;
+            border-top: 4px solid var(--primary-dark);
+        }
+
+        .brand-story {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .story-title { font-weight: bold; color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 10px; }
+        .story-badge { 
+            display: inline-block; background: var(--accent-green); color: white; 
+            padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px;
+        }
+        
+        .gen-compare {
+            font-size: 0.9rem; color: #555; margin-top: 10px;
+            border-top: 1px dashed #ddd; padding-top: 10px;
+        }
+        .gen-item { margin-bottom: 6px; }
+        .gen-highlight { color: #1E8449; font-weight: bold; }
+
+        .wb-card {
+            background: #F4F6F7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent-green);
+            position: relative;
+        }
+        
+        .wb-card.future-product {
+            background: var(--gold-bg);
+            border-left: 4px solid var(--gold);
+        }
+        .badge-future {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: var(--gold);
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .dose-info {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.85rem;
+            color: #E67E22; /* 橘色強調劑量 */
+            font-weight: bold;
+        }
+
+        /* 購買與注意事項 */
+        .buy-container {
+            margin: 20px 30px 40px 30px;
+            text-align: center;
+        }
+        
+        .notice-box {
+            background-color: var(--notice-bg);
+            border: 1px dashed #F1C40F;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .notice-title { font-weight: bold; color: #B7950B; margin-bottom: 8px; display: block; }
+        .notice-list { margin: 0; padding-left: 20px; color: #7D6608; }
+        .notice-list li { margin-bottom: 5px; }
+
+        .btn-buy {
+            display: block; width: 100%;
+            background: var(--primary-dark);
+            color: white; padding: 18px;
+            border-radius: 12px;
+            text-decoration: none; 
+            font-weight: bold; font-size: 1.1rem;
+            box-shadow: 0 5px 20px rgba(31, 78, 121, 0.3);
+            transition: transform 0.1s;
+        }
+        .btn-buy:active { transform: scale(0.98); }
+
+        .btn-reset {
+            display: block; width: 100%; text-align: center;
+            padding: 20px; color: #999; background: none; border: none;
+            cursor: pointer; text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="quiz-page">
+        <header>
+            <h1>🩺 個人化營養診斷</h1>
+            <p class="subtitle">30秒找出您現在真正需要的營養素</p>
+        </header>
+
+        <div class="content-box">
+            <div class="question-block">
+                <label class="q-title">1. 您的性別</label>
+                <div class="option-grid">
+                    <label class="option-btn">
+                        <input type="radio" name="gender" value="female" checked>
+                        <span>女性 👩🏻</span>
+                    </label>
+                    <label class="option-btn">
+                        <input type="radio" name="gender" value="male">
+                        <span>男性 👦🏻</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label class="q-title">2. 您的年齡層</label>
+                <select id="age">
+                    <option value="15-25">15 - 25 歲 (學生/發育期)</option>
+                    <option value="26-40" selected>26 - 40 歲 (職場/輕熟齡)</option>
+                    <option value="41-55">41 - 55 歲 (熟齡/更年期)</option>
+                    <option value="56+">56 歲以上 (銀髮保養)</option>
+                </select>
+            </div>
+
+            <div class="question-block">
+                <label class="q-title">3. 您最近的困擾或狀態 (可複選)</label>
+                <div class="option-grid" style="margin-bottom:15px;">
+                     <label class="option-btn special-option">
+                        <input type="checkbox" value="pregnancy">
+                        <span style="color:#C0392B;">🤰🏻 孕期/哺乳媽咪</span>
+                    </label>
+                    <label class="option-btn special-option mounjaro-option">
+                        <input type="checkbox" value="mounjaro">
+                        <span style="color:#5B2C6F;">猛健樂療程中 💉</span>
+                    </label>
+                    <label class="option-btn special-option">
+                        <input type="checkbox" value="vegetarian">
+                        <span style="color:#1E8449;">🥬 素食者</span>
+                    </label>
+                </div>
+                <div class="option-grid" id="symptoms-container">
+                    </div>
+            </div>
+
+            <button class="btn-submit" onclick="showResults()">查看完整診斷報告 👉</button>
+        </div>
+    </div>
+
+    <div id="result-page">
+        <div class="result-header">
+            <h2 style="color:var(--primary-dark); margin:0;">📋 您的專屬處方籤</h2>
+            <p style="color:#666; font-size:0.9rem;">以下是為您量身打造的服用時間表與成分解析</p>
+        </div>
+
+        <div id="alert-section"></div>
+
+        <div id="schedule-list"></div>
+
+        <div class="brand-section">
+            
+            <div class="brand-story">
+                <span class="story-badge">0-99歲皆可食用</span>
+                <div class="story-title">🌱 為什麼推薦「維補益 (WeBelieve)」？</div>
+                <p style="font-size:0.95rem; color:#444; margin-bottom:10px;">
+                    由美國安德魯博士研發，找到營養素進入天然酵母細胞的「通關密碼」。不像化學維他命難吸收，它如同食物一樣安全、擁有國際食品權威認證。
+                </p>
+                <div class="gen-compare">
+                    <div class="gen-item">❌ <b>第一代 (化學合成)：</b> 石油提煉、含焦油與色素，吸收率差。</div>
+                    <div class="gen-item">⚠️ <b>第二代 (萃取濃縮)：</b> 需添加防腐劑防止腐敗，可能有糖分殘留。</div>
+                    <div class="gen-item gen-highlight">✅ <b>第三代 (全食物酵母)：</b> 酵母載體技術，高吸收、無化學添加，是最完美的維生素型態。</div>
+                </div>
+            </div>
+
+            <h3 style="color:var(--primary-dark); margin-top:0;">🏆 團購選購指南</h3>
+            <p style="font-size:0.9rem; color:#666; margin-bottom:20px;">
+                針對您的需求，我們篩選出本次團購適合您的產品：
+            </p>
+            <div id="wb-list"></div>
+        </div>
+
+        <div class="buy-container">
+            <div class="notice-box">
+                <span class="notice-title">⚠️ 團購下單注意事項</span>
+                <ul class="notice-list">
+                    <li>需登入<b>「賣貨便會員」</b>後可下單 🛒</li>
+                    <li><b>2罐 / 4罐 / 6罐</b> 皆有專屬優惠方案</li>
+                    <li>請記得<b>領取折價卷</b>折抵💰</li>
+                    <li>🔥 <b>出貨日為 1/2</b> (預計 1/4 起陸續到貨，煩請務必取貨)</li>
+                </ul>
+            </div>
+
+            <a href="https://myship.7-11.com.tw/general/detail/GM2204054318113" target="_blank" class="btn-buy">
+                立即前往賣貨便下單 🛒
+            </a>
+        </div>
+        
+        <button class="btn-reset" onclick="resetQuiz()">重新測驗</button>
+    </div>
+
+</div>
+
+<script>
+    // --- 1. 資料庫設定 ---
+
+    // 困擾選項
+    const symptoms = [
+        { id: 'fatigue', label: '容易疲累 🪫' },
+        { id: 'pale', label: '氣色不佳 🫥' },
+        { id: 'dull_skin', label: '皮膚暗沉蠟黃 🌝' },
+        { id: 'dry_skin', label: '肌膚乾燥/細紋 🪾' },
+        { id: 'sleep', label: '睡眠品質差 💤' },
+        { id: 'period_pain', label: '經期不適/悶痛 🩸' },
+        { id: 'pms', label: '經前易怒/胸漲 🤬' },
+        { id: 'cold', label: '手腳冰冷 ❄️' },
+        { id: 'constipation', label: '排便不順 💩' },
+        { id: 'mood', label: '情緒低落/易怒 🔥' },
+        { id: 'oily_skin', label: '皮脂分泌旺盛 𫝟' },
+        { id: 'acne', label: '容易長痘痘 🌋' },
+        { id: 'hair_loss', label: '落髮/髮量少 🧑🏻‍🦲' },
+        { id: 'eyes', label: '高度用眼者 👁️' },
+        { id: 'workout', label: '有運動習慣/關節保養 🏋🏻' },
+        { id: 'weight_loss', label: '減重族群 💪🏻' },
+        { id: 'alcohol', label: '應酬/飲酒需求 🍺' },
+        { id: 'private_part', label: '私密處困擾 💗' },
+        { id: 'bad_breath', label: '口腔氣味重 👄' }
+    ];
+
+    // 成分詳細功效 - 兩套版本
+    const ingredientInfoGeneral = {
+        'B群': '啟動身體能量代謝，消除疲勞、穩定神經',
+        '維他命C': '抗氧化，促進膠原合成，提升保護力',
+        '鐵': '補血氣，改善臉色蒼白與手腳冰冷',
+        '膠原蛋白': '美顏保濕，維持皮膚彈性與關節靈活',
+        '益生菌': '調整腸道菌叢，改善便秘與口氣',
+        '薑黃': '🔥 加強代謝、抗疲勞、減少身體慢性發炎',
+        '葉黃素': '過濾藍光，保護黃斑部，舒緩眼壓',
+        '生物素': '頭髮與指甲的關鍵原料，預防斷裂',
+        '鈣': '穩定神經與肌肉，預防骨質流失',
+        '鎂': '天然放鬆劑，改善睡眠與肌肉緊繃',
+        '魚油': '抗發炎(紅腫痘)，保護心血管與思緒清晰',
+        '鋅': '修復黏膜與皮膚，控制油脂分泌',
+        'Q10': '心臟動力來源，提升細胞活力',
+        '肌酸': '提升肌肉爆發力，幫助肌肉留住水分',
+        '蛋白質': '修復肌肉組織，避免代謝下降',
+        'GABA': '抑制過度興奮的神經，幫助入睡',
+        '穀胱甘肽': '強力抗氧化，幫助肝臟解毒與亮白'
+    };
+
+    const ingredientInfoMom = {
+        'B群': '含葉酸與B12，寶寶發育關鍵，媽咪提神必備',
+        '維他命C': '抗氧化，促進鐵質吸收，增強媽咪保護力',
+        '鐵': '一人吃兩人補，提供寶寶造血原料，預防媽咪貧血',
+        '膠原蛋白': '預防妊娠紋，支撐肚皮彈性，產後恢復',
+        '益生菌': '建立寶寶免疫基礎，改善媽咪孕期便秘',
+        '薑黃': '⚠️ 孕期不建議食用 (產後可適量)',
+        '葉黃素': '保護媽咪視力，透過乳汁提供寶寶護眼營養',
+        '生物素': '產後落髮救星，維持頭髮健康',
+        '鈣': '預防媽咪抽筋，提供寶寶骨骼發育原料',
+        '鎂': '舒緩孕期腿部緊繃，幫助入睡',
+        '魚油': '補充DHA幫助寶寶腦部發育 (⚠️預產期前暫停)',
+        '鋅': '修復黏膜，幫助產後傷口癒合',
+        'Q10': '⚠️ 孕期/哺乳期暫不建議食用',
+        '肌酸': '⚠️ 孕期/哺乳期暫不建議食用',
+        '蛋白質': '寶寶生長原料，促進乳汁分泌',
+        'GABA': '舒緩孕期焦慮，幫助入睡',
+        '穀胱甘肽': '⚠️ 孕期/哺乳期暫不建議食用'
+    };
+
+    // 時間段組合說明
+    const timeSlotSynergy = {
+        '起床空腹': {
+            title: '☀️ 開啟吸收的黃金期',
+            desc: `
+                空腹時膠原蛋白與鐵(搭配C)吸收率最佳。<br>
+                <div style="margin-top:5px; font-size:0.85em; color:#D35400;">
+                    ⚠️ 若胃敏感或懷孕反胃，請改為「隨餐」或「餐後」吃。
+                </div>
+            `
+        },
+        '早餐後': {
+            title: '🚀 啟動一日能量',
+            desc: 'B群幫助能量代謝。葉黃素為脂溶性，需搭配早餐油脂吸收。'
+        },
+        '午餐後': {
+            title: '🛡️ 強化防護',
+            desc: '鈣片移至午餐以避開早餐的鐵劑。魚油隨餐吃吸收最好。'
+        },
+        '運動前後': {
+            title: '💪 修復黃金窗',
+            desc: '蛋白質即時回補肌肉與體力損耗。'
+        },
+        '睡前': {
+            title: '🌙 放鬆與修復',
+            desc: '鎂幫助神經放鬆。益生菌睡前空腹吃，定殖效果佳。'
+        }
+    };
+
+    // 症狀對應規則
+    const rules = {
+        'pregnancy': ['B群', '鐵', '鈣', '魚油', '益生菌', '維他命C'], 
+        'mounjaro': ['B群', '鈣', '肌酸', '鎂', '蛋白質'], 
+        'vegetarian': ['B群', '鐵', '鋅', '鈣'],
+        'fatigue': ['B群', '鐵', 'Q10', '薑黃'],
+        'pale': ['鐵', '維他命C', 'B群', '膠原蛋白'],
+        'dull_skin': ['穀胱甘肽', '維他命C', '膠原蛋白'],
+        'dry_skin': ['魚油', '膠原蛋白', '維他命C'],
+        'sleep': ['鎂', 'GABA'],
+        'period_pain': ['鈣', '鎂', '魚油'],
+        'pms': ['鈣', '鎂', 'B群'],
+        'cold': ['鐵', '薑黃'],
+        'constipation': ['鎂', '益生菌'],
+        'mood': ['鈣', '鎂', 'B群', '魚油'],
+        'oily_skin': ['鋅', 'B群'],
+        'acne': ['鋅', '魚油', '益生菌'],
+        'hair_loss': ['鐵', '鋅', '生物素'],
+        'eyes': ['葉黃素', '魚油'],
+        'workout': ['肌酸', 'B群', '魚油', '膠原蛋白', '薑黃'],
+        'weight_loss': ['B群', '蛋白質', '益生菌', '薑黃'],
+        'alcohol': ['B群', '薑黃'],
+        'private_part': ['益生菌'],
+        'bad_breath': ['益生菌', '鋅']
+    };
+
+    // 禁忌規則
+    const contraindications = {
+        'pregnancy': ['Q10', '穀胱甘肽', '肌酸', '薑黃', 'A醇'],
+        'vegetarian': ['魚油', '膠原蛋白'] 
+    };
+
+    // 產品資料 (含劑量 dose)
+    const wbData = {
+        'B群': { 
+            name: '天然酵母B群', 
+            desc: '早餐後｜含葉酸，天然提神',
+            dose: '💧 每日 2 顆 (足量B群攝取)'
+        },
+        '維他命C': { 
+            name: '西印度櫻桃C', 
+            desc: '早餐後或空腹｜7倍吸收力助膠原合成',
+            dose: '💧 每日 2 顆 (約 120-150mg 天然C)'
+        },
+        '鈣': { 
+            name: '海藻鈣', 
+            desc: '午餐後｜素食可食，高吸收率',
+            dose: '💧 每日 2 顆 (約 400-600mg 鈣)'
+        },
+        '鎂': { 
+            name: '天然酵母鎂', 
+            desc: '睡前｜幫助入睡，預防抽筋',
+            dose: '💧 每日 1-2 顆 (約 150mg 鎂)'
+        },
+        '鋅': { 
+            name: '天然酵母鋅', 
+            desc: '午晚餐後｜增強保護力',
+            dose: '💧 每日 1 顆 (約 12-15mg 鋅)'
+        },
+        '薑黃': { 
+            name: '薑黃', 
+            desc: '餐後｜代謝神器，抗疲勞 (孕期暫停)',
+            dose: '💧 每日 2 顆 (加強代謝劑量)'
+        },
+        '鐵': { 
+            name: '酵母鐵', 
+            desc: '早上空腹｜溫和不便秘，氣色救星',
+            dose: '💧 每日 1 顆 (約 15-20mg 鐵)'
+        },
+        '膠原蛋白': { 
+            name: '一丸膠原蛋白 (璦研司)', 
+            desc: '早起空腹｜日本百年製藥級・美顏護關節雙效',
+            dose: '💧 每日 1 包 (1000Da 小分子)',
+            isFuture: true 
+        }
+    };
+
+    // --- 初始化 ---
+    const container = document.getElementById('symptoms-container');
+    symptoms.forEach(item => {
+        container.innerHTML += `
+            <label class="option-btn">
+                <input type="checkbox" value="${item.id}">
+                <span>${item.label}</span>
+            </label>
+        `;
+    });
+
+    function showResults() {
+        const gender = document.querySelector('input[name="gender"]:checked').value;
+        const age = document.getElementById('age').value;
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        const checkedValues = Array.from(allCheckboxes).map(cb => cb.value);
+        
+        const isPregnant = checkedValues.includes('pregnancy');
+        const isVeg = checkedValues.includes('vegetarian');
+        const isMounjaro = checkedValues.includes('mounjaro');
+
+        let needs = new Set(['B群']); 
+
+        if (gender === 'female') {
+            if (['15-25', '26-40'].includes(age)) { needs.add('鐵'); needs.add('維他命C'); }
+            else { needs.add('鈣'); needs.add('魚油'); }
+        } else {
+            needs.add('鋅');
+            if (['41-55', '56+'].includes(age)) needs.add('魚油');
+        }
+
+        checkedValues.forEach(s => {
+            if(rules[s]) rules[s].forEach(n => needs.add(n));
+            if(s === 'fatigue' && gender === 'female') needs.add('鐵');
+        });
+
+        if (isPregnant) {
+            contraindications['pregnancy'].forEach(banned => needs.delete(banned));
+        }
+        if (isVeg) {
+            contraindications['vegetarian'].forEach(banned => needs.delete(banned));
+        }
+
+        const finalNeeds = Array.from(needs);
+        
+        renderAlerts(isPregnant, isVeg, isMounjaro);
+        renderSchedule(finalNeeds, isPregnant);
+        renderWb(finalNeeds);
+
+        document.getElementById('quiz-page').style.display = 'none';
+        document.getElementById('result-page').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+
+    function renderAlerts(isMom, isVeg, isMounjaro) {
+        const alertSection = document.getElementById('alert-section');
+        alertSection.innerHTML = '';
+
+        if (isMom) {
+            alertSection.innerHTML += `
+                <div class="alert-box mom">
+                    <span style="font-size:1.5rem; margin-right:10px;">🤱🏻</span>
+                    <div>
+                        <strong>孕媽咪/哺乳專屬提醒：</strong><br>
+                        1. 系統已移除 <b>Q10、穀胱甘肽、薑黃</b> 等暫不建議成分。<br>
+                        2. <b>魚油</b>建議在預產期前 2 週暫停食用。<br>
+                        3. <b>維補益海藻鈣與酵母B群</b> 非常適合孕期補充。
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (isMounjaro) {
+            alertSection.innerHTML += `
+                <div class="alert-box mounjaro">
+                    <span style="font-size:1.5rem; margin-right:10px;">💉</span>
+                    <div>
+                        <strong>猛健樂療程筆記：</strong><br>
+                        1. 已加強 <b>肌酸與蛋白質</b> 建議，預防肌肉流失(肌少症)。<br>
+                        2. <b>鎂</b> 對於緩解療程常見的排便困擾非常有幫助。<br>
+                        3. 請務必補充足夠水分 (2500cc/日) 以利代謝。
+                    </div>
+                </div>
+            `;
+        }
+
+        if (isVeg) {
+            alertSection.innerHTML += `
+                <div class="alert-box normal">
+                    <span style="font-size:1.5rem; margin-right:10px;">🥬</span>
+                    <div>
+                        <strong>素食者營養筆記：</strong><br>
+                        1. 已加強 <b>B12 (B群) 與 鐵</b> 建議。<br>
+                        2. 系統移除了魚油與膠原蛋白 (動物性)。
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function renderSchedule(list, isPregnant) {
+        const timeMap = {
+            '起床空腹': ['膠原蛋白', '維他命C', '鐵', '益生菌'],
+            '早餐後': ['B群', '薑黃', '葉黃素', '生物素'],
+            '午餐後': ['鈣', '魚油', '鋅', 'Q10'],
+            '運動前後': ['肌酸', '蛋白質'],
+            '睡前': ['鎂', 'GABA', '穀胱甘肽']
+        };
+
+        const currentInfo = isPregnant ? ingredientInfoMom : ingredientInfoGeneral;
+
+        let html = '';
+        
+        for (let [time, items] of Object.entries(timeMap)) {
+            const userItems = items.filter(i => list.includes(i));
+            
+            if (userItems.length > 0) {
+                let itemsHtml = userItems.map(item => `
+                    <div class="supplement-item">
+                        <div class="supp-name">● ${item}</div>
+                        <div class="supp-desc">${currentInfo[item] || ''}</div>
+                    </div>
+                `).join('');
+
+                let synergyHtml = '';
+                if (timeSlotSynergy[time]) {
+                    synergyHtml = `
+                        <div class="synergy-box">
+                            <span class="synergy-title">💡 為什麼這時候一起吃？</span>
+                            ${timeSlotSynergy[time].desc}
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="schedule-card">
+                        <div class="time-header">
+                            <span>${time}</span>
+                            <span style="font-size:0.8rem; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px;">${userItems.length} 項</span>
+                        </div>
+                        ${synergyHtml}
+                        <div class="item-list">
+                            ${itemsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        document.getElementById('schedule-list').innerHTML = html || '<p style="text-align:center; padding:20px;">恭喜您！目前狀態良好，維持基礎均衡飲食即可。</p>';
+    }
+
+    function renderWb(list) {
+        let html = '';
+        let hasItem = false;
+        
+        const currentItems = list.filter(item => wbData[item] && !wbData[item].isFuture);
+        const futureItems = list.filter(item => wbData[item] && wbData[item].isFuture);
+
+        currentItems.forEach(item => {
+            hasItem = true;
+            html += `
+                <div class="wb-card">
+                    <div style="font-weight:bold; color:#1F4E79; font-size:1.1rem; margin-bottom:5px;">
+                        ✅ ${wbData[item].name}
+                    </div>
+                    <div style="font-size:0.95rem; color:#444;">
+                        ${wbData[item].desc}
+                    </div>
+                    <div class="dose-info">${wbData[item].dose}</div>
+                </div>
+            `;
+        });
+
+        futureItems.forEach(item => {
+            hasItem = true;
+            html += `
+                <div class="wb-card future-product">
+                    <span class="badge-future">1/27 開團 🔥</span>
+                    <div style="font-weight:bold; color:#9A7D0A; font-size:1.1rem; margin-bottom:5px;">
+                        👑 ${wbData[item].name}
+                    </div>
+                    <div style="font-size:0.9rem; color:#7D6608; line-height:1.5;">
+                        <b>SK-II御用廠原料・1000Da極小分子</b><br>
+                        含鮭魚鼻軟骨(護關節)+7倍吸收微脂囊C。<br>
+                        ${wbData[item].desc}
+                    </div>
+                    <div class="dose-info">${wbData[item].dose}</div>
+                </div>
+            `;
+        });
+        
+        document.getElementById('wb-list').innerHTML = hasItem ? html : '<p>目前清單中暫無對應的維補益產品</p>';
+    }
+
+    function resetQuiz() {
+        document.getElementById('quiz-page').style.display = 'block';
+        document.getElementById('result-page').style.display = 'none';
+        window.scrollTo(0,0);
+    }
+</script>
+
+</body>
+</html>
